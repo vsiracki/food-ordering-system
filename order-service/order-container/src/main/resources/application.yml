@@ -18,20 +18,35 @@ spring:
   jpa:
     open-in-view: false
     show-sql: true
-    database-platform: org.hibernate.dialect.PostgreSQL9Dialect
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQL9Dialect
   datasource:
     url: jdbc:postgresql://localhost:5432/postgres?currentSchema=order&binaryTransfer=true&reWriteBatchedInserts=true&stringtype=unspecified
     username: postgres
     password: admin
     driver-class-name: org.postgresql.Driver
-    platform: postgres
   sql:
     init:
       mode: ALWAYS
       schema-locations: classpath:init-schema.sql
+      platform: postgres
+
+  application:
+        name: order-service
+
+  cloud:
+      gateway:
+        discovery:
+          locator:
+            enabled: true
+
+eureka:
+        client:
+          serviceUrl:
+            defaultZone: http://localhost:9090/eureka/
+        instance:
+          hostname: localhost
+          prefer-ip-address: true
+          lease-expiration-duration-in-seconds: 5
+          lease-renewal-interval-in-seconds: 2
 
 kafka-config:
   bootstrap-servers: localhost:19092, localhost:29092, localhost:39092

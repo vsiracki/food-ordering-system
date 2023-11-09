@@ -1,6 +1,10 @@
 server:
   port: 8184
 
+logging:
+  level:
+    com.food.ordering.system: DEBUG
+
 customer-service:
   customer-topic-name: customer
 
@@ -8,20 +12,34 @@ spring:
   jpa:
     open-in-view: false
     show-sql: false
-    database-platform: org.hibernate.dialect.PostgreSQL9Dialect
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQL9Dialect
   datasource:
     url: jdbc:postgresql://localhost:5432/postgres?currentSchema=customer&binaryTransfer=true&reWriteBatchedInserts=true
     username: postgres
     password: admin
     driver-class-name: org.postgresql.Driver
-    platform: postgres
   sql:
     init:
       mode: ALWAYS
       schema-locations: classpath:init-schema.sql
+
+  application:
+       name: customer-service
+
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:9090/eureka/
+  instance:
+    hostname: localhost
+    prefer-ip-address: true
+    lease-expiration-duration-in-seconds: 5
+    lease-renewal-interval-in-seconds: 2
 
 kafka-config:
   bootstrap-servers: localhost:19092, localhost:29092, localhost:39092
