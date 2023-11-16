@@ -1,43 +1,24 @@
 server:
   port: 9092
-  max-http-header-size: 50KB
 
 spring:
   application:
-    name: api-gateway
+    name: gateway-service
+  profiles:
+    active: gateway
+  config:
+    import: 'configserver:'
   cloud:
-    gateway:
-      discovery:
-        locator:
-          enabled: true
-      routes:
-        - id: CUSTOMER-SERVICE
-          uri: lb://CUSTOMER-SERVICE
-          predicates:
-            - Path=/customers/**, /customer, /customer?**
-          filters:
-            - RewritePath=/customers/(?<path>.*), /$\{path}
-            - name: CircuitBreaker
-              args:
-                name: circuitBreaker
-                fallbackUri: forward:/customer-fallback
-                statusCodes:
-                  - 404
-        - id: ORDER-SERVICE
-          uri: lb://ORDER-SERVICE
-          predicates:
-            - Path=/orders/**
-          filters:
-            - name: CircuitBreaker
-              args:
-                name: ORDER-SERVICE
-                fallbackUri: forward:/order-fallback
+    config:
+      name: gateway-service,config-client
+
 eureka:
   client:
-    register-with-eureka: false
-    fetch-registry: true
-    service-url:
-      defaultZone: http://localhost:9090/eureka
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
   instance:
-    hostname: localhost
-    prefer-ip-address: true
+    lease-expiration-duration-in-seconds: 5
+    lease-renewal-interval-in-seconds: 2
+
+log:
+  app-name: gateway-service

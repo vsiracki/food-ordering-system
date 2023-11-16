@@ -13,6 +13,8 @@
         <module>restaurant-service</module>
         <module>discovery-service</module>
         <module>gateway-service</module>
+        <module>config-server</module>
+        <module>app-config-data</module>
     </modules>
 
     <parent>
@@ -212,7 +214,32 @@
                 <artifactId>spring-cloud-starter-circuitbreaker-reactor-resilience4j</artifactId>
                 <version>${spring-cloud-starter-circuitbreaker-reactor-resilience4j.version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>com.food.ordering.system</groupId>
+                <artifactId>app-config-data</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-config-server</artifactId>
+                <version>${spring-cloud.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-starter-config</artifactId>
+                <version>${spring-cloud.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-data-redis-reactive</artifactId>
+                <version>${spring-boot.version}</version>
+            </dependency>
+
         </dependencies>
+
     </dependencyManagement>
 
     <dependencies>

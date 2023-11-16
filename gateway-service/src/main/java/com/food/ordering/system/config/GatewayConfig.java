@@ -1,9 +1,9 @@
 package com.food.ordering.system.config;
 
+import com.food.ordering.system.config.data.GatewayServiceConfigData;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import io.github.resilience4j.timelimiter.TimeLimiterConfig;
 import org.springframework.cloud.circuitbreaker.resilience4j.ReactiveResilience4JCircuitBreakerFactory;
-import org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JCircuitBreakerFactory;
 import org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JConfigBuilder;
 import org.springframework.cloud.client.circuitbreaker.Customizer;
 import org.springframework.context.annotation.Bean;
@@ -13,33 +13,32 @@ import java.time.Duration;
 
 @Configuration
 public class GatewayConfig {
-//
-//
-//    @Bean
-//    Customizer<ReactiveResilience4JCircuitBreakerFactory> circuitBreakerFactoryCustomizer() {
-//        return reactiveResilience4JCircuitBreakerFactory ->
-//                reactiveResilience4JCircuitBreakerFactory.configureDefault(id -> new Resilience4JConfigBuilder(id)
-//                        .timeLimiterConfig(TimeLimiterConfig.custom()
-//                                .timeoutDuration(Duration.ofMillis(3000))
-//                                .build())
-//                        .circuitBreakerConfig(CircuitBreakerConfig.custom()
-//                                .failureRateThreshold(50)
-//                                .slowCallRateThreshold(50)
-//                                .slowCallDurationThreshold(Duration.ofMillis(50))
-//                                .permittedNumberOfCallsInHalfOpenState(10)
-//                                .slidingWindowSize(10)
-//                                .minimumNumberOfCalls(10)
-//                                .waitDurationInOpenState(Duration.ofMillis(60000))
-//                                .build())
-//                        .build());
-//    }
 
-    @Bean
-    public Customizer<Resilience4JCircuitBreakerFactory> defaultCustomizer() {
-        return factory -> factory.configureDefault(id -> new Resilience4JConfigBuilder (id)
-                .timeLimiterConfig(TimeLimiterConfig.custom().timeoutDuration(Duration.ofSeconds(4)).build())
-                .circuitBreakerConfig(CircuitBreakerConfig.ofDefaults())
-                .build());
+    private final GatewayServiceConfigData gatewayServiceConfigData;
+
+    public GatewayConfig(GatewayServiceConfigData configData) {
+        this.gatewayServiceConfigData = configData;
     }
 
+    @Bean
+    Customizer<ReactiveResilience4JCircuitBreakerFactory> circuitBreakerFactoryCustomizer() {
+        return reactiveResilience4JCircuitBreakerFactory ->
+                reactiveResilience4JCircuitBreakerFactory.configureDefault(id -> new Resilience4JConfigBuilder(id)
+                        .timeLimiterConfig(TimeLimiterConfig.custom()
+                                .timeoutDuration(Duration.ofMillis(gatewayServiceConfigData.getTimeoutMs()))
+                                .build())
+                        .circuitBreakerConfig(CircuitBreakerConfig.custom()
+                                .failureRateThreshold(gatewayServiceConfigData.getFailureRateThreshold())
+                                .slowCallRateThreshold(gatewayServiceConfigData.getSlowCallRateThreshold())
+                                .slowCallDurationThreshold(Duration.ofMillis(gatewayServiceConfigData
+                                        .getSlowCallDurationThreshold()))
+                                .permittedNumberOfCallsInHalfOpenState(gatewayServiceConfigData
+                                        .getPermittedNumOfCallsInHalfOpenState())
+                                .slidingWindowSize(gatewayServiceConfigData.getSlidingWindowSize())
+                                .minimumNumberOfCalls(gatewayServiceConfigData.getMinNumberOfCalls())
+                                .waitDurationInOpenState(Duration.ofMillis(gatewayServiceConfigData
+                                        .getWaitDurationInOpenState()))
+                                .build())
+                        .build());
+    }
 }
