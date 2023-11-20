@@ -18,7 +18,21 @@ eureka:
       defaultZone: http://localhost:8761/eureka/
   instance:
     lease-expiration-duration-in-seconds: 5
-    lease-renewal-interval-in-seconds: 2
+    lease-renewal-interval-in-seconds: 10
 
 log:
   app-name: gateway-service
+
+hystrix:
+  command:
+     default:
+      execution:
+        timeout:
+          enabled: true
+          isolation:
+             thread:
+              timeoutInMilliseconds: 5000 # Set a timeout value suitable for your use case
+      circuitBreaker:
+        requestVolumeThreshold: 20
+        errorThresholdPercentage: 50
+        sleepWindowInMilliseconds: 5000
